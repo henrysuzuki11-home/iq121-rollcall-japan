@@ -1,0 +1,18 @@
+{
+  "name": "oyami-mamori-kenkyujo",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "親みまもり研究所 — 家族の見守りと安否確認の情報サイト",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/rss": "^4.0.11",
+    "@astrojs/sitemap": "^3.4.1",
+    "astro": "^5.12.0"
+  }
+}

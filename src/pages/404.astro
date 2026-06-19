@@ -1,0 +1,73 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { CATEGORIES } from '../consts';
+---
+
+<BaseLayout title="ページが見つかりません" noindex={true}>
+  <div class="container notfound">
+    <p class="nf-code">404</p>
+    <h1>お探しのページが見つかりませんでした</h1>
+    <p class="nf-lead">
+      ページが移動または削除された可能性があります。以下から目的の情報をお探しください。
+    </p>
+    <div class="nf-actions">
+      <a href="/" class="btn btn-primary">ホームへ戻る</a>
+      <a href="/articles" class="btn btn-outline">記事一覧を見る</a>
+    </div>
+    <nav class="nf-cats" aria-label="カテゴリー">
+      {
+        CATEGORIES.map((c) => (
+          <a href={`/categories/${c.slug}`}>
+            {c.emoji} {c.name}
+          </a>
+        ))
+      }
+    </nav>
+  </div>
+</BaseLayout>
+
+<style>
+  .notfound {
+    text-align: center;
+    padding: 4rem 20px;
+  }
+  .nf-code {
+    font-size: 4rem;
+    font-weight: 800;
+    color: var(--color-primary);
+    margin: 0;
+    line-height: 1;
+  }
+  .notfound h1 {
+    font-size: 1.5rem;
+    margin: 0.5rem 0 1rem;
+  }
+  .nf-lead {
+    color: var(--color-text-muted);
+    margin-bottom: 1.6rem;
+  }
+  .nf-actions {
+    display: flex;
+    gap: 0.8rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+  }
+  .nf-cats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    justify-content: center;
+  }
+  .nf-cats a {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-primary-dark);
+    background: var(--color-primary-light);
+    padding: 0.4em 1em;
+    border-radius: 999px;
+  }
+  .nf-cats a:hover {
+    text-decoration: none;
+  }
+</style>

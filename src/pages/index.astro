@@ -1,0 +1,197 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ArticleCard from '../components/ArticleCard.astro';
+import DownloadButtons from '../components/DownloadButtons.astro';
+import { CATEGORIES, SITE_NAME, APP_NAME } from '../consts';
+
+const articles = (await getCollection('articles', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime()
+);
+
+const featured = articles.filter((a) => a.data.featured).slice(0, 3);
+const latest = articles.slice(0, 6);
+const showcase = featured.length >= 3 ? featured : latest.slice(0, 3);
+---
+
+<BaseLayout
+  canonical="/"
+  breadcrumbs={[{ name: 'ホーム', url: '/' }]}
+>
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container hero-inner">
+      <p class="hero-eyebrow">家族の見守り情報メディア</p>
+      <h1 class="hero-title visually-balanced">
+        離れていても、<br />毎日「元気だよ」を届けあえる。
+      </h1>
+      <p class="hero-lead">
+        {SITE_NAME}は、高齢の親や一人暮らしの家族の見守り、安否確認、防災について、
+        信頼できる情報を分かりやすくお届けするメディアです。毎日の安否確認を
+        ワンタップで完了できる見守りアプリ「{APP_NAME}」もご紹介しています。
+      </p>
+      <div class="hero-actions">
+        <a href="/articles" class="btn btn-primary">記事を読む</a>
+        <a href="#download" class="btn btn-outline">アプリを見る</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Categories -->
+  <section class="container section">
+    <header class="section-head">
+      <h2>カテゴリーから探す</h2>
+      <p>気になるテーマから記事を探せます。</p>
+    </header>
+    <div class="cat-grid">
+      {
+        CATEGORIES.map((c) => (
+          <a href={`/categories/${c.slug}`} class="cat-card">
+            <span class="cat-emoji" aria-hidden="true">
+              {c.emoji}
+            </span>
+            <span class="cat-name">{c.name}</span>
+            <span class="cat-desc">{c.description}</span>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- Featured / Showcase -->
+  {
+    showcase.length > 0 && (
+      <section class="container section">
+        <header class="section-head">
+          <h2>注目の記事</h2>
+          <p>編集部がおすすめする読んでほしい記事です。</p>
+        </header>
+        <div class="article-grid">
+          {showcase.map((a) => (
+            <ArticleCard article={a} />
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  <!-- App download -->
+  <section class="container section" id="download">
+    <DownloadButtons />
+  </section>
+
+  <!-- Latest -->
+  <section class="container section">
+    <header class="section-head">
+      <h2>新着記事</h2>
+      <p>
+        <a href="/articles">すべての記事を見る →</a>
+      </p>
+    </header>
+    <div class="article-grid">
+      {latest.map((a) => <ArticleCard article={a} />)}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero {
+    background: radial-gradient(
+        1200px 400px at 70% -10%,
+        var(--color-primary-light),
+        transparent
+      ),
+      var(--color-bg);
+    padding: 3.5rem 0 2.5rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .hero-inner {
+    max-width: 760px;
+  }
+  .hero-eyebrow {
+    display: inline-block;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--color-primary-dark);
+    background: var(--color-primary-light);
+    padding: 0.35em 1em;
+    border-radius: 999px;
+    margin: 0 0 1rem;
+  }
+  .hero-title {
+    font-size: 2.4rem;
+    line-height: 1.4;
+    margin: 0 0 1rem;
+  }
+  .hero-lead {
+    font-size: 1.05rem;
+    color: var(--color-text-muted);
+    line-height: 1.9;
+    margin: 0 0 1.6rem;
+  }
+  .hero-actions {
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+  }
+  .section {
+    padding-top: 3rem;
+  }
+  .section-head {
+    margin-bottom: 1.4rem;
+  }
+  .section-head h2 {
+    font-size: 1.5rem;
+    margin: 0 0 0.3rem;
+  }
+  .section-head p {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: 0.92rem;
+  }
+  .cat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+  .cat-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: 1.3rem;
+    color: inherit;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .cat-card:hover {
+    text-decoration: none;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px var(--color-shadow);
+  }
+  .cat-emoji {
+    font-size: 1.8rem;
+  }
+  .cat-name {
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: var(--color-primary-dark);
+  }
+  .cat-desc {
+    font-size: 0.83rem;
+    color: var(--color-text-muted);
+    line-height: 1.7;
+  }
+  .article-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.3rem;
+  }
+  @media (max-width: 600px) {
+    .hero-title {
+      font-size: 1.8rem;
+    }
+  }
+</style>

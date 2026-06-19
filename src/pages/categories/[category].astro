@@ -1,0 +1,131 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import DownloadButtons from '../../components/DownloadButtons.astro';
+import { CATEGORIES, getCategory } from '../../consts';
+
+export async function getStaticPaths() {
+  return CATEGORIES.map((c) => ({ params: { category: c.slug } }));
+}
+
+const { category } = Astro.params;
+const cat = getCategory(category!);
+if (!cat) return Astro.redirect('/categories');
+
+const articles = (
+  await getCollection(
+    'articles',
+    ({ data }) => !data.draft && data.category === category
+  )
+).sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
+
+const breadcrumbs = [
+  { name: 'ホーム', url: '/' },
+  { name: 'カテゴリー', url: '/categories' },
+  { name: cat.name, url: `/categories/${cat.slug}` },
+];
+---
+
+<BaseLayout
+  title={`${cat.name}の記事一覧`}
+  description={cat.description}
+  canonical={`/categories/${cat.slug}`}
+  breadcrumbs={breadcrumbs}
+>
+  <div class="container section">
+    <header class="page-head">
+      <p class="page-emoji" aria-hidden="true">{cat.emoji}</p>
+      <h1>{cat.name}</h1>
+      <p class="page-desc">{cat.description}</p>
+    </header>
+
+    {
+      articles.length > 0 ? (
+        <div class="article-grid">
+          {articles.map((a) => (
+            <ArticleCard article={a} />
+          ))}
+        </div>
+      ) : (
+        <p class="empty">このカテゴリーの記事は準備中です。</p>
+      )
+    }
+
+    <DownloadButtons />
+
+    <nav class="other-cats" aria-label="他のカテゴリー">
+      <h2>他のカテゴリー</h2>
+      <ul>
+        {
+          CATEGORIES.filter((c) => c.slug !== cat.slug).map((c) => (
+            <li>
+              <a href={`/categories/${c.slug}`}>
+                {c.emoji} {c.name}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
+</BaseLayout>
+
+<style>
+  .section {
+    padding: 2.5rem 20px;
+  }
+  .page-head {
+    margin-bottom: 1.8rem;
+  }
+  .page-emoji {
+    font-size: 2.6rem;
+    margin: 0;
+  }
+  .page-head h1 {
+    font-size: 1.9rem;
+    margin: 0.3rem 0 0.5rem;
+  }
+  .page-desc {
+    color: var(--color-text-muted);
+    margin: 0;
+    line-height: 1.8;
+    max-width: 640px;
+  }
+  .article-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.3rem;
+  }
+  .empty {
+    color: var(--color-text-muted);
+    padding: 2rem 0;
+  }
+  .other-cats {
+    margin-top: 2.5rem;
+  }
+  .other-cats h2 {
+    font-size: 1.2rem;
+    margin-bottom: 0.8rem;
+  }
+  .other-cats ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .other-cats a {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-primary-dark);
+    background: var(--color-primary-light);
+    padding: 0.4em 1em;
+    border-radius: 999px;
+  }
+  .other-cats a:hover {
+    text-decoration: none;
+    background: #d3e8e2;
+  }
+</style>

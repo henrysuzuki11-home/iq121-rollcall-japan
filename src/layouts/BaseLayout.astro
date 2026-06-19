@@ -1,0 +1,66 @@
+---
+import { SITE_LANG } from '../consts';
+import BaseHead from '../components/BaseHead.astro';
+import StructuredData from '../components/StructuredData.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+  canonical?: string;
+  ogType?: string;
+  image?: string;
+  publishDate?: Date;
+  modifiedDate?: Date;
+  noindex?: boolean;
+  structuredDataType?: 'website' | 'article';
+  breadcrumbs?: { name: string; url: string }[];
+}
+
+const {
+  title,
+  description,
+  canonical,
+  ogType = 'website',
+  image,
+  publishDate,
+  modifiedDate,
+  noindex,
+  structuredDataType = 'website',
+  breadcrumbs = [],
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang={SITE_LANG}>
+  <head>
+    <BaseHead
+      title={title}
+      description={description}
+      canonical={canonical}
+      ogType={ogType}
+      image={image}
+      publishDate={publishDate}
+      modifiedDate={modifiedDate}
+      noindex={noindex}
+    />
+    <StructuredData
+      type={structuredDataType}
+      title={title}
+      description={description}
+      url={canonical ?? Astro.url.pathname}
+      publishDate={publishDate}
+      modifiedDate={modifiedDate}
+      breadcrumbs={breadcrumbs}
+    />
+  </head>
+  <body>
+    <a href="#main" class="sr-only">本文へスキップ</a>
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

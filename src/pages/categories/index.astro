@@ -1,0 +1,98 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { CATEGORIES } from '../../consts';
+
+const articles = await getCollection('articles', ({ data }) => !data.draft);
+const countFor = (slug: string) =>
+  articles.filter((a) => a.data.category === slug).length;
+
+const breadcrumbs = [
+  { name: 'ホーム', url: '/' },
+  { name: 'カテゴリー', url: '/categories' },
+];
+---
+
+<BaseLayout
+  title="カテゴリー一覧"
+  description="親みまもり研究所の記事カテゴリー一覧です。高齢者の見守り、安否確認・防災、子どもの安全、家族のつながり、アプリ活用ガイドからお選びいただけます。"
+  canonical="/categories"
+  breadcrumbs={breadcrumbs}
+>
+  <div class="container section">
+    <header class="page-head">
+      <h1>カテゴリー一覧</h1>
+      <p>関心のあるテーマから記事を探せます。</p>
+    </header>
+
+    <div class="cat-grid">
+      {
+        CATEGORIES.map((c) => (
+          <a href={`/categories/${c.slug}`} class="cat-card">
+            <span class="cat-emoji" aria-hidden="true">
+              {c.emoji}
+            </span>
+            <div>
+              <span class="cat-name">{c.name}</span>
+              <span class="cat-count">{countFor(c.slug)} 記事</span>
+            </div>
+            <span class="cat-desc">{c.description}</span>
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .section {
+    padding: 2.5rem 20px;
+  }
+  .page-head h1 {
+    font-size: 1.9rem;
+    margin: 0 0 0.4rem;
+  }
+  .page-head p {
+    color: var(--color-text-muted);
+    margin: 0 0 1.5rem;
+  }
+  .cat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.2rem;
+  }
+  .cat-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: 1.4rem;
+    color: inherit;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .cat-card:hover {
+    text-decoration: none;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px var(--color-shadow);
+  }
+  .cat-emoji {
+    font-size: 2rem;
+  }
+  .cat-name {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--color-primary-dark);
+    margin-right: 0.6rem;
+  }
+  .cat-count {
+    font-size: 0.78rem;
+    color: var(--color-text-muted);
+  }
+  .cat-desc {
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    line-height: 1.7;
+  }
+</style>

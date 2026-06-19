@@ -1,0 +1,112 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { getCategory } from '../consts';
+
+interface Props {
+  article: CollectionEntry<'articles'>;
+}
+const { article } = Astro.props;
+const { title, description, category, pubDate, tags } = article.data;
+const cat = getCategory(category);
+const dateStr = pubDate.toLocaleDateString('ja-JP', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<article class="card">
+  <a href={`/articles/${article.slug}`} class="card-link">
+    <div class="card-head">
+      {cat && (
+        <span class="card-cat">
+          <span aria-hidden="true">{cat.emoji}</span> {cat.name}
+        </span>
+      )}
+      <time datetime={pubDate.toISOString()} class="card-date">{dateStr}</time>
+    </div>
+    <h3 class="card-title">{title}</h3>
+    <p class="card-desc">{description}</p>
+    {
+      tags.length > 0 && (
+        <ul class="card-tags">
+          {tags.slice(0, 3).map((t) => (
+            <li>#{t}</li>
+          ))}
+        </ul>
+      )
+    }
+  </a>
+</article>
+
+<style>
+  .card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    height: 100%;
+  }
+  .card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px var(--color-shadow);
+  }
+  .card-link {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 1.3rem;
+    color: inherit;
+  }
+  .card-link:hover {
+    text-decoration: none;
+  }
+  .card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 0.7rem;
+  }
+  .card-cat {
+    font-size: 0.74rem;
+    font-weight: 700;
+    color: var(--color-primary-dark);
+    background: var(--color-primary-light);
+    padding: 0.25em 0.7em;
+    border-radius: 999px;
+  }
+  .card-date {
+    font-size: 0.74rem;
+    color: var(--color-text-muted);
+  }
+  .card-title {
+    font-size: 1.08rem;
+    line-height: 1.55;
+    margin: 0 0 0.5rem;
+    color: var(--color-text);
+  }
+  .card-desc {
+    font-size: 0.88rem;
+    color: var(--color-text-muted);
+    line-height: 1.7;
+    margin: 0 0 1rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    list-style: none;
+    margin: auto 0 0;
+    padding: 0;
+  }
+  .card-tags li {
+    font-size: 0.72rem;
+    color: var(--color-text-muted);
+  }
+</style>

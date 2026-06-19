@@ -1,0 +1,156 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { getCategory } from '../consts';
+import BaseLayout from './BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import DownloadButtons from '../components/DownloadButtons.astro';
+import RelatedArticles from '../components/RelatedArticles.astro';
+
+interface Props {
+  article: CollectionEntry<'articles'>;
+}
+const { article } = Astro.props;
+const { title, description, category, pubDate, updatedDate, author, tags } =
+  article.data;
+const cat = getCategory(category);
+
+const dateStr = pubDate.toLocaleDateString('ja-JP', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+const updatedStr = updatedDate?.toLocaleDateString('ja-JP', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+
+const breadcrumbs = [
+  { name: 'ホーム', url: '/' },
+  { name: '記事一覧', url: '/articles' },
+  ...(cat ? [{ name: cat.name, url: `/categories/${cat.slug}` }] : []),
+  { name: title, url: `/articles/${article.slug}` },
+];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={`/articles/${article.slug}`}
+  ogType="article"
+  publishDate={pubDate}
+  modifiedDate={updatedDate}
+  structuredDataType="article"
+  breadcrumbs={breadcrumbs}
+>
+  <div class="container">
+    <Breadcrumbs crumbs={breadcrumbs} />
+
+    <article class="article">
+      <header class="article-header">
+        {
+          cat && (
+            <a href={`/categories/${cat.slug}`} class="article-cat">
+              {cat.emoji} {cat.name}
+            </a>
+          )
+        }
+        <h1 class="article-title visually-balanced">{title}</h1>
+        <p class="article-lead">{description}</p>
+        <div class="article-meta">
+          <span>{author}</span>
+          <span>・</span>
+          <time datetime={pubDate.toISOString()}>公開 {dateStr}</time>
+          {updatedStr && <span>・更新 {updatedStr}</span>}
+        </div>
+      </header>
+
+      <div class="prose article-body">
+        <slot />
+      </div>
+
+      {
+        tags.length > 0 && (
+          <ul class="article-tags" aria-label="タグ">
+            {tags.map((t) => (
+              <li>#{t}</li>
+            ))}
+          </ul>
+        )
+      }
+    </article>
+
+    <div class="prose">
+      <DownloadButtons />
+    </div>
+
+    <div class="prose">
+      <RelatedArticles current={article} />
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .article {
+    max-width: var(--maxw-prose);
+    margin-inline: auto;
+  }
+  .article-header {
+    margin-bottom: 2rem;
+  }
+  .article-cat {
+    display: inline-block;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--color-primary-dark);
+    background: var(--color-primary-light);
+    padding: 0.3em 0.9em;
+    border-radius: 999px;
+    margin-bottom: 1rem;
+  }
+  .article-cat:hover {
+    text-decoration: none;
+    background: #d3e8e2;
+  }
+  .article-title {
+    font-size: 2rem;
+    line-height: 1.45;
+    margin: 0 0 0.8rem;
+  }
+  .article-lead {
+    font-size: 1.05rem;
+    color: var(--color-text-muted);
+    line-height: 1.8;
+    margin: 0 0 1rem;
+  }
+  .article-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    font-size: 0.82rem;
+    color: var(--color-text-muted);
+    padding-bottom: 1.2rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .article-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    list-style: none;
+    padding: 1.5rem 0 0;
+    margin: 2rem 0 0;
+    border-top: 1px solid var(--color-border);
+  }
+  .article-tags li {
+    font-size: 0.82rem;
+    color: var(--color-primary-dark);
+    background: var(--color-primary-light);
+    padding: 0.3em 0.8em;
+    border-radius: 999px;
+  }
+  @media (max-width: 600px) {
+    .article-title {
+      font-size: 1.55rem;
+    }
+  }
+</style>

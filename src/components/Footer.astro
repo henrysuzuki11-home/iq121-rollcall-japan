@@ -1,0 +1,101 @@
+---
+import { SITE_NAME, SITE_DESCRIPTION, CATEGORIES, NAV_LINKS } from '../consts';
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div class="footer-about">
+      <p class="footer-brand">🏠 {SITE_NAME}</p>
+      <p class="footer-desc">{SITE_DESCRIPTION}</p>
+    </div>
+
+    <nav class="footer-col" aria-label="サイトメニュー">
+      <h2>メニュー</h2>
+      <ul>
+        {NAV_LINKS.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+      </ul>
+    </nav>
+
+    <nav class="footer-col" aria-label="カテゴリー">
+      <h2>カテゴリー</h2>
+      <ul>
+        {
+          CATEGORIES.map((c) => (
+            <li>
+              <a href={`/categories/${c.slug}`}>{c.name}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
+
+  <div class="footer-bottom">
+    <div class="container">
+      <p>© {year} {SITE_NAME}. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: 4rem;
+    background: var(--color-primary-dark);
+    color: #e8efed;
+  }
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr 1fr;
+    gap: 2rem;
+    padding-top: 3rem;
+    padding-bottom: 2rem;
+  }
+  .footer-brand {
+    font-weight: 800;
+    font-size: 1.1rem;
+    margin: 0 0 0.6rem;
+    color: #fff;
+  }
+  .footer-desc {
+    font-size: 0.85rem;
+    line-height: 1.7;
+    color: #c5d6d1;
+    margin: 0;
+  }
+  .footer-col h2 {
+    font-size: 0.95rem;
+    margin: 0 0 0.8rem;
+    color: #fff;
+  }
+  .footer-col ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .footer-col li {
+    margin: 0.4rem 0;
+  }
+  .footer-col a {
+    color: #c5d6d1;
+    font-size: 0.9rem;
+  }
+  .footer-col a:hover {
+    color: #fff;
+  }
+  .footer-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 1rem 0;
+    font-size: 0.8rem;
+    color: #a9bdb7;
+  }
+  .footer-bottom p {
+    margin: 0;
+  }
+  @media (max-width: 720px) {
+    .footer-grid {
+      grid-template-columns: 1fr;
+      gap: 1.6rem;
+    }
+  }
+</style>

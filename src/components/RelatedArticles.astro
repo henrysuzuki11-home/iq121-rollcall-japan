@@ -1,0 +1,60 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import ArticleCard from './ArticleCard.astro';
+
+interface Props {
+  current: CollectionEntry<'articles'>;
+  limit?: number;
+}
+const { current, limit = 3 } = Astro.props;
+
+const all = (await getCollection('articles', ({ data }) => !data.draft)).filter(
+  (a) => a.slug !== current.slug
+);
+
+// Score by shared category (+3) and shared tags (+1 each), newest first as tiebreak.
+const currentTags = new Set(current.data.tags);
+const scored = all
+  .map((a) => {
+    let score = 0;
+    if (a.data.category === current.data.category) score += 3;
+    for (const t of a.data.tags) if (currentTags.has(t)) score += 1;
+    return { a, score };
+  })
+  .sort((x, y) => {
+    if (y.score !== x.score) return y.score - x.score;
+    return y.a.data.pubDate.getTime() - x.a.data.pubDate.getTime();
+  });
+
+const related = scored.slice(0, limit).map((s) => s.a);
+---
+
+{
+  related.length > 0 && (
+    <section class="related" aria-label="関連記事">
+      <h2 class="related-title">関連記事</h2>
+      <div class="related-grid">
+        {related.map((a) => (
+          <ArticleCard article={a} />
+        ))}
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .related {
+    margin-top: 3rem;
+  }
+  .related-title {
+    font-size: 1.4rem;
+    margin-bottom: 1.2rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 2px solid var(--color-primary-light);
+  }
+  .related-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.2rem;
+  }
+</style>
