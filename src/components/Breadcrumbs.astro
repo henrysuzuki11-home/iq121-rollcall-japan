@@ -6,6 +6,7 @@ interface Crumb {
 interface Props {
   crumbs: Crumb[];
 }
+import { withBase } from '../utils/url';
 const { crumbs } = Astro.props;
 ---
 
@@ -15,7 +16,7 @@ const { crumbs } = Astro.props;
       crumbs.map((crumb, i) => (
         <li>
           {i < crumbs.length - 1 ? (
-            <a href={crumb.url}>{crumb.name}</a>
+            <a href={withBase(crumb.url)}>{crumb.name}</a>
           ) : (
             <span aria-current="page">{crumb.name}</span>
           )}

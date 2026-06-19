@@ -1,13 +1,17 @@
 ---
 import { SITE_NAME, NAV_LINKS } from '../consts';
-const path = Astro.url.pathname;
-const isActive = (href: string) =>
-  href === '/' ? path === '/' : path.startsWith(href);
+import { withBase } from '../utils/url';
+const norm = (s: string) => s.replace(/\/+$/, '') || '/';
+const path = norm(Astro.url.pathname);
+const isActive = (href: string) => {
+  const target = norm(withBase(href));
+  return href === '/' ? path === target : path.startsWith(target);
+};
 ---
 
 <header class="site-header">
   <div class="container header-inner">
-    <a href="/" class="brand" aria-label={`${SITE_NAME} ホームへ`}>
+    <a href={withBase('/')} class="brand" aria-label={`${SITE_NAME} ホームへ`}>
       <span class="brand-mark" aria-hidden="true">🏠</span>
       <span class="brand-name">{SITE_NAME}</span>
     </a>
@@ -23,7 +27,7 @@ const isActive = (href: string) =>
           NAV_LINKS.map((link) => (
             <li>
               <a
-                href={link.href}
+                href={withBase(link.href)}
                 aria-current={isActive(link.href) ? 'page' : undefined}
                 class={isActive(link.href) ? 'active' : ''}
               >

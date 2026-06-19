@@ -23,11 +23,25 @@ npm run build    # 本番ビルド → dist/
 npm run preview  # ビルド結果のプレビュー
 ```
 
-## 公開前の設定
+## デプロイ（GitHub Pages）
 
-1. **`src/consts.ts`** の `SITE_URL` を本番ドメインに変更
-2. **`public/robots.txt`** の `Sitemap:` URL を本番ドメインに変更
-3. （任意）`public/og-default.svg` をブランドの OGP 画像に差し替え
+このリポジトリは GitHub Pages のプロジェクトサイトとして公開する設定済みです。
+
+- 公開 URL: `https://henrysuzuki11-home.github.io/rollcall-japan1/`
+- ベースパス: `/rollcall-japan1`（`src/consts.ts` の `BASE_PATH`）
+- 公開オリジン: `https://henrysuzuki11-home.github.io`（同 `SITE_URL`）
+- ワークフロー: [.github/workflows/deploy.yml](.github/workflows/deploy.yml) — `main` への push で自動ビルド＆デプロイ
+
+GitHub 側で **Settings → Pages → Build and deployment → Source** を
+**「GitHub Actions」** に設定してください。
+
+### 設定変更が必要な場合
+
+- **ユーザー名 / リポジトリ名が異なる場合**: `src/consts.ts` の `SITE_URL` と
+  `BASE_PATH`、`public/robots.txt` の `Sitemap:` URL を変更
+- **独自ドメインに移行する場合**: `SITE_URL` をそのドメインに、`BASE_PATH` を
+  `''`（空文字）に変更
+- （任意）`public/og-default.svg` をブランドの OGP 画像に差し替え
 
 ## 記事の追加方法
 

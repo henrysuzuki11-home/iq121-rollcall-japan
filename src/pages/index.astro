@@ -4,6 +4,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import ArticleCard from '../components/ArticleCard.astro';
 import DownloadButtons from '../components/DownloadButtons.astro';
 import { CATEGORIES, SITE_NAME, APP_NAME } from '../consts';
+import { withBase } from '../utils/url';
 
 const articles = (await getCollection('articles', ({ data }) => !data.draft)).sort(
   (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime()
@@ -31,7 +32,7 @@ const showcase = featured.length >= 3 ? featured : latest.slice(0, 3);
         ワンタップで完了できる見守りアプリ「{APP_NAME}」もご紹介しています。
       </p>
       <div class="hero-actions">
-        <a href="/articles" class="btn btn-primary">記事を読む</a>
+        <a href={withBase('/articles')} class="btn btn-primary">記事を読む</a>
         <a href="#download" class="btn btn-outline">アプリを見る</a>
       </div>
     </div>
@@ -46,7 +47,7 @@ const showcase = featured.length >= 3 ? featured : latest.slice(0, 3);
     <div class="cat-grid">
       {
         CATEGORIES.map((c) => (
-          <a href={`/categories/${c.slug}`} class="cat-card">
+          <a href={withBase(`/categories/${c.slug}`)} class="cat-card">
             <span class="cat-emoji" aria-hidden="true">
               {c.emoji}
             </span>
@@ -85,7 +86,7 @@ const showcase = featured.length >= 3 ? featured : latest.slice(0, 3);
     <header class="section-head">
       <h2>新着記事</h2>
       <p>
-        <a href="/articles">すべての記事を見る →</a>
+        <a href={withBase('/articles')}>すべての記事を見る →</a>
       </p>
     </header>
     <div class="article-grid">

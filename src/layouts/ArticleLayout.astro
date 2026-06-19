@@ -1,6 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import { getCategory } from '../consts';
+import { withBase } from '../utils/url';
 import BaseLayout from './BaseLayout.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
 import DownloadButtons from '../components/DownloadButtons.astro';
@@ -50,7 +51,7 @@ const breadcrumbs = [
       <header class="article-header">
         {
           cat && (
-            <a href={`/categories/${cat.slug}`} class="article-cat">
+            <a href={withBase(`/categories/${cat.slug}`)} class="article-cat">
               {cat.emoji} {cat.name}
             </a>
           )

@@ -1,5 +1,6 @@
 ---
 import { SITE_NAME, SITE_DESCRIPTION, CATEGORIES, NAV_LINKS } from '../consts';
+import { withBase } from '../utils/url';
 const year = new Date().getFullYear();
 ---
 
@@ -13,7 +14,7 @@ const year = new Date().getFullYear();
     <nav class="footer-col" aria-label="サイトメニュー">
       <h2>メニュー</h2>
       <ul>
-        {NAV_LINKS.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+        {NAV_LINKS.map((l) => <li><a href={withBase(l.href)}>{l.label}</a></li>)}
       </ul>
     </nav>
 
@@ -23,7 +24,7 @@ const year = new Date().getFullYear();
         {
           CATEGORIES.map((c) => (
             <li>
-              <a href={`/categories/${c.slug}`}>{c.name}</a>
+              <a href={withBase(`/categories/${c.slug}`)}>{c.name}</a>
             </li>
           ))
         }

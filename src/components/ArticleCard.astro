@@ -1,6 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import { getCategory } from '../consts';
+import { withBase } from '../utils/url';
 
 interface Props {
   article: CollectionEntry<'articles'>;
@@ -16,7 +17,7 @@ const dateStr = pubDate.toLocaleDateString('ja-JP', {
 ---
 
 <article class="card">
-  <a href={`/articles/${article.slug}`} class="card-link">
+  <a href={withBase(`/articles/${article.slug}`)} class="card-link">
     <div class="card-head">
       {cat && (
         <span class="card-cat">

@@ -4,6 +4,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import ArticleCard from '../../components/ArticleCard.astro';
 import DownloadButtons from '../../components/DownloadButtons.astro';
 import { CATEGORIES, getCategory } from '../../consts';
+import { withBase } from '../../utils/url';
 
 export async function getStaticPaths() {
   return CATEGORIES.map((c) => ({ params: { category: c.slug } }));
@@ -11,7 +12,7 @@ export async function getStaticPaths() {
 
 const { category } = Astro.params;
 const cat = getCategory(category!);
-if (!cat) return Astro.redirect('/categories');
+if (!cat) return Astro.redirect(withBase('/categories'));
 
 const articles = (
   await getCollection(
@@ -60,7 +61,7 @@ const breadcrumbs = [
         {
           CATEGORIES.filter((c) => c.slug !== cat.slug).map((c) => (
             <li>
-              <a href={`/categories/${c.slug}`}>
+              <a href={withBase(`/categories/${c.slug}`)}>
                 {c.emoji} {c.name}
               </a>
             </li>

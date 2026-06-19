@@ -1,5 +1,6 @@
 ---
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, AUTHOR } from '../consts';
+import { withBase } from '../utils/url';
 
 type Crumb = { name: string; url: string };
 
@@ -25,27 +26,31 @@ const {
   breadcrumbs = [],
 } = Astro.props;
 
-const pageURL = url ? new URL(url, SITE_URL).href : SITE_URL;
+// Build absolute URLs that include both the origin and the base path.
+const abs = (path: string) => new URL(withBase(path), SITE_URL).href;
+const homeURL = abs('/');
+
+const pageURL = url ? abs(url) : homeURL;
 
 const organization = {
   '@type': 'Organization',
-  '@id': `${SITE_URL}/#organization`,
+  '@id': `${homeURL}#organization`,
   name: SITE_NAME,
-  url: SITE_URL,
+  url: homeURL,
   logo: {
     '@type': 'ImageObject',
-    url: new URL('/favicon.svg', SITE_URL).href,
+    url: abs('/favicon.svg'),
   },
 };
 
 const website = {
   '@type': 'WebSite',
-  '@id': `${SITE_URL}/#website`,
+  '@id': `${homeURL}#website`,
   name: SITE_NAME,
   description: SITE_DESCRIPTION,
-  url: SITE_URL,
+  url: homeURL,
   inLanguage: 'ja-JP',
-  publisher: { '@id': `${SITE_URL}/#organization` },
+  publisher: { '@id': `${homeURL}#organization` },
 };
 
 const graph: Record<string, unknown>[] = [organization, website];
@@ -60,8 +65,8 @@ if (type === 'article' && title) {
     mainEntityOfPage: { '@type': 'WebPage', '@id': pageURL },
     datePublished: publishDate?.toISOString(),
     dateModified: (modifiedDate ?? publishDate)?.toISOString(),
-    author: { '@type': 'Organization', name: author, url: SITE_URL },
-    publisher: { '@id': `${SITE_URL}/#organization` },
+    author: { '@type': 'Organization', name: author, url: homeURL },
+    publisher: { '@id': `${homeURL}#organization` },
   });
 }
 
@@ -72,7 +77,7 @@ if (breadcrumbs.length > 0) {
       '@type': 'ListItem',
       position: i + 1,
       name: crumb.name,
-      item: new URL(crumb.url, SITE_URL).href,
+      item: abs(crumb.url),
     })),
   });
 }

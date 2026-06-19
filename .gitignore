@@ -25,3 +25,6 @@ pnpm-debug.log*
 .vscode/*
 !.vscode/extensions.json
 .idea/
+
+# nested clone of the rollcall-japan1 repo (do not commit into this project)
+rollcall-japan/

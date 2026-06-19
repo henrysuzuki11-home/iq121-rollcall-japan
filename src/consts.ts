@@ -1,8 +1,18 @@
 // =====================================================================
-// Site-wide constants — change SITE_URL to your production domain.
+// Site-wide constants.
+//
+// Deployment target: GitHub Pages project site
+//   https://henrysuzuki11-home.github.io/rollcall-japan1/
+//
+// SITE_URL  = the GitHub Pages origin (your username .github.io)
+// BASE_PATH = the repository name, used as the URL base path.
+//
+// If you later move to a custom domain, set SITE_URL to that domain
+// and BASE_PATH to '' (empty string).
 // =====================================================================
 
-export const SITE_URL = 'https://oyami-mamori.jp';
+export const SITE_URL = 'https://henrysuzuki11-home.github.io';
+export const BASE_PATH = '/rollcall-japan1';
 
 export const SITE_NAME = '親みまもり研究所';
 export const SITE_TITLE = '親みまもり研究所｜家族の見守り・安否確認の情報メディア';
